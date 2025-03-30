@@ -1,0 +1,130 @@
+﻿<Window x:Class="OllamaManager.Views.ModelDetailsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:OllamaManager.Views"
+        mc:Ignorable="d"
+        Title="{Binding WindowTitle, Mode=OneWay}" Height="600" Width="800"
+        xmlns:converters="clr-namespace:OllamaManager.Converters"
+        WindowStartupLocation="CenterScreen">
+
+    <Window.Resources>
+        <converters:ArrayToNewlineConverter x:Key="ArrayToNewlineConverter"/>
+    </Window.Resources>
+
+    <Grid>
+        <TabControl>
+            <TabItem Header="Common">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+                    <StackPanel Margin="10">
+                        <TextBlock Text="Parameters:" FontWeight="Bold"/>
+                        <TextBox Text="{Binding Parameters}" IsReadOnly="True"
+                                 Margin="0,0,0,10" TextWrapping="NoWrap" AcceptsReturn="True"/>
+
+                        <TextBlock Text="Template:" FontWeight="Bold"/>
+                        <TextBox Text="{Binding Template}" IsReadOnly="True"
+                                 Margin="0,0,0,10" TextWrapping="NoWrap" AcceptsReturn="True"/>
+
+                        <TextBlock Text="System:" FontWeight="Bold"/>
+                        <TextBox Text="{Binding System}" IsReadOnly="True"
+                                 Margin="0,0,0,10" TextWrapping="NoWrap" AcceptsReturn="True"/>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <TabItem Header="Details">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+                    <StackPanel Margin="10">
+                        <TextBlock Text="Parent Model:" FontWeight="Bold"/>
+                        <TextBox Text="{Binding Details.ParentModel}" IsReadOnly="True"
+                                 Margin="0,0,0,10" TextWrapping="NoWrap" AcceptsReturn="True"/>
+
+                        <TextBlock Text="Format:" FontWeight="Bold"/>
+                        <TextBox Text="{Binding Details.Format}" IsReadOnly="True"
+                                 Margin="0,0,0,10" TextWrapping="NoWrap" AcceptsReturn="True"/>
+
+                        <TextBlock Text="Family:" FontWeight="Bold"/>
+                        <TextBox Text="{Binding Details.Family}" IsReadOnly="True"
+                                 Margin="0,0,0,10" TextWrapping="NoWrap" AcceptsReturn="True"/>
+
+                        <TextBlock Text="Families:" FontWeight="Bold"/>
+                        <TextBox Text="{Binding Details.Families, Converter={StaticResource ArrayToNewlineConverter}}"
+                                 IsReadOnly="True" Margin="0,0,0,10" TextWrapping="NoWrap" AcceptsReturn="True"/>
+
+                        <TextBlock Text="Parameter Size:" FontWeight="Bold"/>
+                        <TextBox Text="{Binding Details.ParameterSize}" IsReadOnly="True"
+                                 Margin="0,0,0,10" TextWrapping="NoWrap" AcceptsReturn="True"/>
+
+                        <TextBlock Text="Quantization Level:" FontWeight="Bold"/>
+                        <TextBox Text="{Binding Details.QuantizationLevel}" IsReadOnly="True"
+                                 Margin="0,0,0,10" TextWrapping="NoWrap" AcceptsReturn="True"/>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <TabItem Header="Info">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+                    <StackPanel Margin="10">
+                        <TextBlock Text="Architecture:" FontWeight="Bold"/>
+                        <TextBox Text="{Binding ModelInfo.Architecture}" IsReadOnly="True"
+                                 Margin="0,0,0,10" TextWrapping="NoWrap" AcceptsReturn="True"/>
+
+                        <TextBlock Text="File Type:" FontWeight="Bold"/>
+                        <TextBox Text="{Binding ModelInfo.FileType}" IsReadOnly="True"
+                                 Margin="0,0,0,10" TextWrapping="NoWrap" AcceptsReturn="True"/>
+
+                        <TextBlock Text="Parameter Count:" FontWeight="Bold"/>
+                        <TextBox Text="{Binding ModelInfo.ParameterCount}" IsReadOnly="True"
+                                 Margin="0,0,0,10" TextWrapping="NoWrap" AcceptsReturn="True"/>
+
+                        <TextBlock Text="Quantization Version:" FontWeight="Bold"/>
+                        <TextBox Text="{Binding ModelInfo.QuantizationVersion}" IsReadOnly="True"
+                                 Margin="0,0,0,10" TextWrapping="NoWrap" AcceptsReturn="True"/>
+
+                        <TextBlock Text="Extra Info:" FontWeight="Bold"/>
+                        <TextBox Text="{Binding InfoExtraInfo}" IsReadOnly="True"
+                                 Margin="0,0,0,10" TextWrapping="NoWrap" AcceptsReturn="True"/>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <TabItem Header="Projector">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+                    <StackPanel Margin="10">
+                        <TextBox Text="{Binding ProjectorExtraInfo}" IsReadOnly="True"
+                                 Margin="0,0,0,10" TextWrapping="NoWrap" AcceptsReturn="True"/>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <TabItem Header="License">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+                    <StackPanel Margin="10">
+                        <TextBox Text="{Binding License}" IsReadOnly="True"
+                                 Margin="0,0,0,10" TextWrapping="NoWrap" AcceptsReturn="True"/>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <TabItem Header="Modelfile">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+                    <StackPanel Margin="10">
+                        <TextBox Text="{Binding Modelfile}" IsReadOnly="True"
+                                 Margin="0,0,0,10" TextWrapping="NoWrap" AcceptsReturn="True"/>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <TabItem Header="Json">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+                    <StackPanel Margin="10">
+                        <TextBox Text="{Binding Json}" IsReadOnly="True"
+                     Margin="0,0,0,10" TextWrapping="NoWrap" AcceptsReturn="True"/>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+        </TabControl>
+    </Grid>
+
+</Window>
