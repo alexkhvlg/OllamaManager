@@ -1,5 +1,8 @@
 # OllamaManager
 
+![OllamaManager](assets/MainWindow.png)
+
+
 OllamaManager is a Windows Presentation Foundation (WPF) application designed to manage models using the Ollama API client. The application provides functionality to view, download, and manage model details.
 
 ## Features
