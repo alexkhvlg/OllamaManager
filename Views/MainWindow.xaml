@@ -11,6 +11,7 @@
     <Window.Resources>
         <converters:BytesToHumanReadableConverter x:Key="BytesToHumanReadableConverter"/>
         <converters:RunningStateToIconConverter x:Key="RunningStateToIconConverter"/>
+        <converters:ParameterSizeConverter x:Key="ParameterSizeConverter" />
     </Window.Resources>
 
     <i:Interaction.Triggers>
@@ -135,9 +136,9 @@
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
-                                <DataGridTextColumn Header="Family" Binding="{Binding Details.Family}" Width="Auto"/>
-                                <DataGridTextColumn Header="Parameters" Binding="{Binding Details.ParameterSize}" Width="Auto"/>
-                                <DataGridTextColumn Header="Quantization" Binding="{Binding Details.QuantizationLevel}" Width="Auto"/>
+                                <DataGridTextColumn Header="Family" Binding="{Binding Family}" Width="Auto"/>
+                                <DataGridTextColumn Header="Parameters" Binding="{Binding ParameterSize, Converter={StaticResource ParameterSizeConverter}}" Width="Auto"/>
+                                <DataGridTextColumn Header="Quantization" Binding="{Binding QuantizationLevel}" Width="Auto"/>
                                 <DataGridTextColumn Header="Usage" Binding="{Binding GpuPercent}" Width="Auto"/>
                             </DataGrid.Columns>
 

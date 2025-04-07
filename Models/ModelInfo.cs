@@ -1,6 +1,8 @@
 ﻿using System.ComponentModel;
+using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using OllamaManager.Enums;
+using OllamaManager.Helpers;
 using OllamaSharp.Models;
 
 namespace OllamaManager.Models;
@@ -14,10 +16,7 @@ public partial class ModelInfo : ObservableObject
     private long size;
 
     [ObservableProperty]
-    private Details? details;
-
-    [ObservableProperty]
-    private string gpuPercent;
+    private string gpuPercent = string.Empty;
 
     [ObservableProperty]
     private bool isDownloading;
@@ -31,14 +30,37 @@ public partial class ModelInfo : ObservableObject
     [ObservableProperty]
     private Status status;
 
+    [ObservableProperty]
+    private string? parentModel;
+
+    [ObservableProperty]
+    private string format = string.Empty;
+
+    [ObservableProperty]
+    private string family = string.Empty;
+
+    [ObservableProperty]
+    private string[]? families;
+
+    [ObservableProperty]
+    private decimal parameterSize = 0;
+
+    [ObservableProperty]
+    private string quantizationLevel = string.Empty;
+
     public static ModelInfo FromModel(Model model)
     {
         return new ModelInfo
         {
             Name = model.Name,
             Size = model.Size,
-            Details = model.Details,
-            Status = Status.Ready
+            Status = Status.Ready,
+            ParentModel = model.Details?.ParentModel,
+            Format = model.Details?.Format ?? string.Empty,
+            Family = model.Details?.Family ?? string.Empty,
+            Families = model.Details?.Families,
+            ParameterSize = ParameterSizeToDecimal.Convert(model.Details?.ParameterSize),
+            QuantizationLevel = model.Details?.QuantizationLevel ?? string.Empty
         };
     }
 }
