@@ -1,49 +1,35 @@
 ﻿using System.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using OllamaManager.Enums;
 using OllamaSharp.Models;
 
 namespace OllamaManager.Models;
 
-public class ModelInfo : INotifyPropertyChanged
+public partial class ModelInfo : ObservableObject
 {
-    public string Name { get; set; } = string.Empty;
-    public long Size { get; set; }
-    public Details? Details { get; set; }
+    [ObservableProperty]
+    private string name = string.Empty;
 
-    private bool _isDownloading;
-    public bool IsDownloading
-    {
-        get => _isDownloading;
-        set
-        {
-            _isDownloading = value;
-            OnPropertyChanged(nameof(IsDownloading));
-        }
-    }
+    [ObservableProperty]
+    private long size;
 
-    private int _downloadProgress;
-    public int DownloadProgress
-    {
-        get => _downloadProgress;
-        set
-        {
-            _downloadProgress = value;
-            OnPropertyChanged(nameof(DownloadProgress));
-        }
-    }
+    [ObservableProperty]
+    private Details? details;
 
-    private bool _isRunning;
-    public bool IsRunning
-    {
-        get => _isRunning;
-        set
-        {
-            _isRunning = value;
-            OnPropertyChanged(nameof(IsRunning));
-        }
-    }
+    [ObservableProperty]
+    private string gpuPercent;
 
-    public Status Status { get; set; }
+    [ObservableProperty]
+    private bool isDownloading;
+
+    [ObservableProperty]
+    private int downloadProgress;
+
+    [ObservableProperty]
+    private bool isRunning;
+
+    [ObservableProperty]
+    private Status status;
 
     public static ModelInfo FromModel(Model model)
     {
@@ -54,11 +40,5 @@ public class ModelInfo : INotifyPropertyChanged
             Details = model.Details,
             Status = Status.Ready
         };
-    }
-
-    public event PropertyChangedEventHandler? PropertyChanged;
-    protected virtual void OnPropertyChanged(string propertyName)
-    {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }

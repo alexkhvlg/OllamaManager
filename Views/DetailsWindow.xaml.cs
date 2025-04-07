@@ -6,9 +6,9 @@ namespace OllamaManager.Views;
 /// <summary>
 /// Interaction logic for ModelDetailsWindow.xaml
 /// </summary>
-public partial class ModelDetailsWindow : Window
+public partial class DetailsWindow : Window
 {
-    public ModelDetailsWindow(ModelDetailsViewModel viewModel)
+    public DetailsWindow(DetailsViewModel viewModel)
     {
         InitializeComponent();
 
@@ -17,6 +17,6 @@ public partial class ModelDetailsWindow : Window
 
     public void SetModel(string name, ShowModelResponse model)
     {
-        ((ModelDetailsViewModel)DataContext).LoadModel(name, model);
+        ((DetailsViewModel)DataContext).LoadModel(name, model);
     }
 }
