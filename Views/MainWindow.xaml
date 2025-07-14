@@ -6,7 +6,7 @@
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:converters="clr-namespace:OllamaManager.Converters"
         mc:Ignorable="d"
-        Title="{Binding WindowTitle, Mode=OneWay}" Height="620" Width="900" WindowStartupLocation="CenterScreen">
+        Title="{Binding WindowTitle, Mode=OneWay}" Height="660" Width="900" WindowStartupLocation="CenterScreen">
 
     <Window.Resources>
         <converters:BytesToHumanReadableConverter x:Key="BytesToHumanReadableConverter"/>
@@ -159,6 +159,12 @@
                                 </ContextMenu>
                             </DataGrid.ContextMenu>
 
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="MouseDoubleClick">
+                                    <i:InvokeCommandAction Command="{Binding ShowModelInfoCommandAsync}" />
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                            
                         </DataGrid>
                     </Grid>
                 </TabItem.Content>
@@ -191,6 +197,8 @@
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="*"/>
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
@@ -206,47 +214,51 @@
                             <TextBlock Grid.Row="2" Grid.Column="0" Margin="5">Status update interval (seconds):</TextBlock>
                             <TextBox Grid.Row="2" Grid.Column="1" Margin="5" Width="100" HorizontalAlignment="Left" Text="{Binding Path=StatusUpdateInterval, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" ToolTip="Set the interval for status updates in seconds." />
 
+                            <Button Grid.Row="3" Grid.Column="2" Content="Restart ollama" Height="25" Width="150" Margin="5" Command="{Binding Path=RestartOllamaCommand}" />
+
                             <!-- Ollama Configuration -->
-                            <TextBlock Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Margin="5,20,5,5" FontWeight="Bold">Ollama Configuration</TextBlock>
+                            <TextBlock Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Margin="5,20,5,5" FontWeight="Bold">Ollama Configuration</TextBlock>
 
-                            <TextBlock Grid.Row="4" Grid.Column="0" Margin="5" ToolTip="Specify the host address for Ollama (default is 127.0.0.1:11434).">OLLAMA_HOST:</TextBlock>
-                            <TextBox Grid.Row="4" Grid.Column="1" Margin="5" Text="{Binding Path=OllamaHost, Mode=TwoWay}" ToolTip="Specify the host address for Ollama (default is 127.0.0.1:11434)." />
+                            <TextBlock Grid.Row="5" Grid.Column="0" Margin="5" ToolTip="Specify the host address for Ollama (default is 127.0.0.1:11434).">OLLAMA_HOST:</TextBlock>
+                            <TextBox Grid.Row="5" Grid.Column="1" Margin="5" Text="{Binding Path=OllamaHost, Mode=TwoWay}" ToolTip="Specify the host address for Ollama (default is 127.0.0.1:11434)." />
 
-                            <TextBlock Grid.Row="5" Grid.Column="0" Margin="5" ToolTip="Define the directory for storing models.">OLLAMA_MODELS:</TextBlock>
-                            <TextBox Grid.Row="5" Grid.Column="1" Margin="5" Text="{Binding Path=OllamaModels, Mode=TwoWay}" ToolTip="Define the directory for storing models." />
+                            <TextBlock Grid.Row="6" Grid.Column="0" Margin="5" ToolTip="Define the directory for storing models.">OLLAMA_MODELS:</TextBlock>
+                            <TextBox Grid.Row="6" Grid.Column="1" Margin="5" Text="{Binding Path=OllamaModels, Mode=TwoWay}" ToolTip="Define the directory for storing models." />
 
-                            <TextBlock Grid.Row="6" Grid.Column="0" Margin="5" ToolTip="Configure allowed origins for cross-origin requests. If you wish to allow all browser extensions access, or specific extensions as needed: chrome-extension://*,moz-extension://*,safari-web-extension://*">OLLAMA_ORIGINS:</TextBlock>
-                            <TextBox Grid.Row="6" Grid.Column="1" Margin="5" Text="{Binding Path=OllamaOrigins, Mode=TwoWay}" ToolTip="Configure allowed origins for cross-origin requests. If you wish to allow all browser extensions access, or specific extensions as needed: chrome-extension://*,moz-extension://*,safari-web-extension://*" />
+                            <TextBlock Grid.Row="7" Grid.Column="0" Margin="5" ToolTip="Configure allowed origins for cross-origin requests. If you wish to allow all browser extensions access, or specific extensions as needed: chrome-extension://*,moz-extension://*,safari-web-extension://*">OLLAMA_ORIGINS:</TextBlock>
+                            <TextBox Grid.Row="7" Grid.Column="1" Margin="5" Text="{Binding Path=OllamaOrigins, Mode=TwoWay}" ToolTip="Configure allowed origins for cross-origin requests. If you wish to allow all browser extensions access, or specific extensions as needed: chrome-extension://*,moz-extension://*,safari-web-extension://*" />
 
-                            <TextBlock Grid.Row="7" Grid.Column="0" Margin="5" ToolTip="Set the size of the context window (default is 2048 tokens).">OLLAMA_CONTEXT_LENGTH:</TextBlock>
-                            <TextBox Grid.Row="7" Grid.Column="1" InputScope="Number" Margin="5" Width="100" HorizontalAlignment="Left" Text="{Binding Path=OllamaContextLength, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" ToolTip="Set the size of the context window (default is 2048 tokens)." />
+                            <TextBlock Grid.Row="8" Grid.Column="0" Margin="5" ToolTip="Set the size of the context window (default is 2048 tokens).">OLLAMA_CONTEXT_LENGTH:</TextBlock>
+                            <TextBox Grid.Row="8" Grid.Column="1" InputScope="Number" Margin="5" Width="100" HorizontalAlignment="Left" Text="{Binding Path=OllamaContextLength, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" ToolTip="Set the size of the context window (default is 2048 tokens)." />
 
-                            <TextBlock Grid.Row="8" Grid.Column="0" Margin="5" ToolTip="Specify the duration for which models remain loaded in memory. (default: 5m)">OLLAMA_KEEP_ALIVE:</TextBlock>
-                            <TextBox Grid.Row="8" Grid.Column="1" InputScope="Number" Margin="5" Width="100" HorizontalAlignment="Left" Text="{Binding Path=OllamaKeepAlive, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" ToolTip="Specify the duration for which models remain loaded in memory. (default: 5m)" />
+                            <TextBlock Grid.Row="9" Grid.Column="0" Margin="5" ToolTip="Specify the duration for which models remain loaded in memory. (default: 5m)">OLLAMA_KEEP_ALIVE:</TextBlock>
+                            <TextBox Grid.Row="9" Grid.Column="1" InputScope="Number" Margin="5" Width="100" HorizontalAlignment="Left" Text="{Binding Path=OllamaKeepAlive, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" ToolTip="Specify the duration for which models remain loaded in memory. (default: 5m)" />
 
-                            <TextBlock Grid.Row="9" Grid.Column="0" Margin="5" ToolTip="Set the maximum number of queued requests (default is 512).">OLLAMA_MAX_QUEUE:</TextBlock>
-                            <TextBox Grid.Row="9" Grid.Column="1" InputScope="Number" Margin="5" Width="100" HorizontalAlignment="Left" Text="{Binding Path=OllamaMaxQueue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" ToolTip="Set the maximum number of queued requests (default is 512)." />
+                            <TextBlock Grid.Row="10" Grid.Column="0" Margin="5" ToolTip="Set the maximum number of queued requests (default is 512).">OLLAMA_MAX_QUEUE:</TextBlock>
+                            <TextBox Grid.Row="10" Grid.Column="1" InputScope="Number" Margin="5" Width="100" HorizontalAlignment="Left" Text="{Binding Path=OllamaMaxQueue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" ToolTip="Set the maximum number of queued requests (default is 512)." />
 
-                            <TextBlock Grid.Row="10" Grid.Column="0" Margin="5" ToolTip="The maximum number of models that can be loaded concurrently provided they fit in available memory. The default is 3 * the number of GPUs or 3 for CPU inference.">OLLAMA_MAX_LOADED_MODELS:</TextBlock>
-                            <TextBox Grid.Row="10" Grid.Column="1" InputScope="Number" Margin="5" Width="100" HorizontalAlignment="Left" Text="{Binding Path=OllamaMaxLoadedModels, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" ToolTip="The maximum number of models that can be loaded concurrently provided they fit in available memory. The default is 3 * the number of GPUs or 3 for CPU inference." />
+                            <TextBlock Grid.Row="11" Grid.Column="0" Margin="5" ToolTip="The maximum number of models that can be loaded concurrently provided they fit in available memory. The default is 3 * the number of GPUs or 3 for CPU inference.">OLLAMA_MAX_LOADED_MODELS:</TextBlock>
+                            <TextBox Grid.Row="11" Grid.Column="1" InputScope="Number" Margin="5" Width="100" HorizontalAlignment="Left" Text="{Binding Path=OllamaMaxLoadedModels, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" ToolTip="The maximum number of models that can be loaded concurrently provided they fit in available memory. The default is 3 * the number of GPUs or 3 for CPU inference." />
 
-                            <TextBlock Grid.Row="11" Grid.Column="0" Margin="5" ToolTip="The maximum number of parallel requests each model will process at the same time. The default will auto-select either 4 or 1 based on available memory.">OLLAMA_NUM_PARALLEL:</TextBlock>
-                            <TextBox Grid.Row="11" Grid.Column="1" InputScope="Number" Margin="5" Width="100" HorizontalAlignment="Left" Text="{Binding Path=OllamaNumParallel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" ToolTip="The maximum number of parallel requests each model will process at the same time. The default will auto-select either 4 or 1 based on available memory." />
+                            <TextBlock Grid.Row="12" Grid.Column="0" Margin="5" ToolTip="The maximum number of parallel requests each model will process at the same time. The default will auto-select either 4 or 1 based on available memory.">OLLAMA_NUM_PARALLEL:</TextBlock>
+                            <TextBox Grid.Row="12" Grid.Column="1" InputScope="Number" Margin="5" Width="100" HorizontalAlignment="Left" Text="{Binding Path=OllamaNumParallel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" ToolTip="The maximum number of parallel requests each model will process at the same time. The default will auto-select either 4 or 1 based on available memory." />
 
-                            <TextBlock Grid.Row="12" Grid.Column="0" Margin="5" ToolTip="Enable Flash Attention to reduce memory usage.">OLLAMA_FLASH_ATTENTION:</TextBlock>
-                            <CheckBox Grid.Row="12" Grid.Column="1" Margin="5" VerticalAlignment="Center" IsChecked="{Binding Path=OllamaFlashAttention, Mode=TwoWay}" ToolTip="Enable Flash Attention to reduce memory usage." />
+                            <TextBlock Grid.Row="13" Grid.Column="0" Margin="5" ToolTip="Enable Flash Attention to reduce memory usage.">OLLAMA_FLASH_ATTENTION:</TextBlock>
+                            <CheckBox Grid.Row="13" Grid.Column="1" Margin="5" VerticalAlignment="Center" IsChecked="{Binding Path=OllamaFlashAttention, Mode=TwoWay}" ToolTip="Enable Flash Attention to reduce memory usage." />
 
-                            <TextBlock Grid.Row="13" Grid.Column="0" Margin="5" ToolTip="Select the quantization type for the K/V context cache.">OLLAMA_KV_CACHE_TYPE:</TextBlock>
-                            <ComboBox Grid.Row="13" Grid.Column="1" Margin="5" Width="100" HorizontalAlignment="Left" SelectedIndex="{Binding Path=OllamaKvCacheType, Mode=TwoWay}" ToolTip="Select the quantization type for the K/V context cache.">
+                            <TextBlock Grid.Row="14" Grid.Column="0" Margin="5" ToolTip="Select the quantization type for the K/V context cache.">OLLAMA_KV_CACHE_TYPE:</TextBlock>
+                            <ComboBox Grid.Row="14" Grid.Column="1" Margin="5" Width="100" HorizontalAlignment="Left" SelectedIndex="{Binding Path=OllamaKvCacheType, Mode=TwoWay}" ToolTip="Select the quantization type for the K/V context cache.">
+                                <ComboBoxItem Content="None"/>
                                 <ComboBoxItem Content="f16"/>
                                 <ComboBoxItem Content="q8_0"/>
                                 <ComboBoxItem Content="q4_0"/>
                             </ComboBox>
 
-                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Grid.Row="15" Grid.Column="0"  Grid.ColumnSpan="3" >
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Grid.Row="16" Grid.Column="0"  Grid.ColumnSpan="3" >
                                 <Button Content="Save" Height="25" Width="150" Margin="5" Command="{Binding Path=SaveConfigCommand}"/>
                             </StackPanel>
                         </Grid>
+
                     </ScrollViewer>
                 </TabItem.Content>
             </TabItem>

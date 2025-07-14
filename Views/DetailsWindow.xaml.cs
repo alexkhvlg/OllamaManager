@@ -8,15 +8,19 @@ namespace OllamaManager.Views;
 /// </summary>
 public partial class DetailsWindow : Window
 {
-    public DetailsWindow(DetailsViewModel viewModel)
+    private readonly DetailsWindowViewModel _detailsWindowViewModel;
+
+    public DetailsWindow(DetailsWindowViewModel viewModel)
     {
         InitializeComponent();
+
+        _detailsWindowViewModel = viewModel;
 
         DataContext = viewModel;
     }
 
     public void SetModel(string name, ShowModelResponse model)
     {
-        ((DetailsViewModel)DataContext).LoadModel(name, model);
+        _detailsWindowViewModel.LoadModel(name, model);
     }
 }

@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 using OllamaSharp.Models;
 
 namespace OllamaManager.ViewModels;
-public partial class DetailsViewModel : ObservableObject
+public partial class DetailsWindowViewModel : ObservableObject
 {
     [ObservableProperty]
     private string? license;
@@ -39,7 +39,7 @@ public partial class DetailsViewModel : ObservableObject
     private string json;
 
     // Конструктор по умолчанию
-    public DetailsViewModel()
+    public DetailsWindowViewModel()
     {
     }
 

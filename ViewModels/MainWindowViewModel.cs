@@ -13,6 +13,8 @@ using OllamaManager.Services;
 using OllamaManager.Views;
 using OllamaSharp;
 using OllamaSharp.Models;
+using System.Net.NetworkInformation;
+using System.DirectoryServices.ActiveDirectory;
 
 namespace OllamaManager.ViewModels;
 
@@ -109,6 +111,16 @@ public partial class MainWindowViewModel : ObservableObject
         get;
     }
 
+    public IRelayCommand StartChatCommand
+    {
+        get;
+    }
+
+    public IRelayCommand RestartOllamaCommand
+    {
+        get;
+    }
+
     public MainWindowViewModel()
     {
         WindowTitle = "Ollama Manager";
@@ -132,9 +144,10 @@ public partial class MainWindowViewModel : ObservableObject
         OllamaFlashAttention = _configService.Config.ollamaFlashAttention != "0";
         OllamaKvCacheType = _configService.Config.ollamaKvCacheType?.ToLowerInvariant() switch
         {
-            "f16" => 0,
-            "q8_0" => 1,
-            "q4_0" => 2,
+            "" => 0,
+            "f16" => 1,
+            "q8_0" => 2,
+            "q4_0" => 3,
             _ => -1
         };
 
@@ -149,6 +162,19 @@ public partial class MainWindowViewModel : ObservableObject
         DeleteModelCommandAsync = new AsyncRelayCommand(DeleteModel);
         WindowClosingCommand = new RelayCommand<object?>(WindowClosing);
         DownloadModelCommandAsync = new AsyncRelayCommand(DownloadModel);
+        RestartOllamaCommand = new RelayCommand(RestartOllama);
+    }
+
+
+    private void RestartOllama()
+    {
+        var script = """
+            @echo off
+            taskkill /f /im "ollama app.exe"
+            taskkill /f /im "ollama.exe"
+            ollama ps
+            """;
+        RunCmd(script);
     }
 
     private bool IsAdmin()
@@ -156,6 +182,25 @@ public partial class MainWindowViewModel : ObservableObject
         var identity = WindowsIdentity.GetCurrent();
         var principal = new WindowsPrincipal(identity);
         return principal.IsInRole(WindowsBuiltInRole.Administrator);
+    }
+
+    private void RunCmd(string script)
+    {
+        var scriptPath = Path.Combine(Path.GetTempPath(), $"OllamaManager_elevate_{Guid.NewGuid()}.cmd");
+        File.WriteAllTextAsync(scriptPath, script);
+
+        System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+        {
+            FileName = scriptPath,
+            UseShellExecute = true,
+            Verb = "runas",
+            CreateNoWindow = true,
+            WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden
+        });
+    }
+    private static string StrEnv(string? str)
+    {
+        return "\"" + (str?.Trim() ?? string.Empty) + "\"";
     }
 
     private void SaveConfig()
@@ -178,9 +223,10 @@ public partial class MainWindowViewModel : ObservableObject
             _configService.Config.ollamaFlashAttention = OllamaFlashAttention ? "1" : "0";
             _configService.Config.ollamaKvCacheType = OllamaKvCacheType switch
             {
-                0 => "f16",
-                1 => "q8_0",
-                2 => "q4_0",
+                0 => "",
+                1 => "f16",
+                2 => "q8_0",
+                3 => "q4_0",
                 _ => string.Empty
             };
 
@@ -190,29 +236,20 @@ public partial class MainWindowViewModel : ObservableObject
             }
             else
             {
-                var scriptPath = Path.Combine(Path.GetTempPath(), $"OllamaManager_elevate_{Guid.NewGuid()}.cmd");
-
-                var script = $@"
-@echo off
-setx /M OLLAMA_HOST ""{_configService.Config.ollamaHost}""
-setx /M OLLAMA_MODELS ""{_configService.Config.ollamaModels}""
-setx /M OLLAMA_ORIGINS ""{_configService.Config.ollamaOrigins}""
-setx /M OLLAMA_CONTEXT_LENGTH ""{_configService.Config.ollamaContextLength}""
-setx /M OLLAMA_KEEP_ALIVE ""{_configService.Config.ollamaKeepAlive}""
-setx /M OLLAMA_MAX_QUEUE ""{_configService.Config.ollamaMaxQueue}""
-setx /M OLLAMA_MAX_LOADED_MODELS ""{_configService.Config.ollamaMaxLoadedModels}""
-setx /M OLLAMA_NUM_PARALLEL ""{_configService.Config.ollamaNumParallel}""
-setx /M OLLAMA_FLASH_ATTENTION ""{_configService.Config.ollamaFlashAttention}""
-setx /M OLLAMA_KV_CACHE_TYPE ""{_configService.Config.ollamaKvCacheType}""
-";
-                File.WriteAllTextAsync(scriptPath, script);
-
-                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
-                {
-                    FileName = scriptPath,
-                    UseShellExecute = true,
-                    Verb = "runas"
-                });
+                var script = $"""
+                    @echo off
+                    setx /M OLLAMA_HOST { StrEnv(_configService.Config.ollamaHost) }
+                    setx /M OLLAMA_MODELS { StrEnv(_configService.Config.ollamaModels) }
+                    setx /M OLLAMA_ORIGINS { StrEnv(_configService.Config.ollamaOrigins) }
+                    setx /M OLLAMA_CONTEXT_LENGTH { StrEnv(_configService.Config.ollamaContextLength) }
+                    setx /M OLLAMA_KEEP_ALIVE { StrEnv(_configService.Config.ollamaKeepAlive) }
+                    setx /M OLLAMA_MAX_QUEUE { StrEnv(_configService.Config.ollamaMaxQueue) }
+                    setx /M OLLAMA_MAX_LOADED_MODELS { StrEnv(_configService.Config.ollamaMaxLoadedModels) }
+                    setx /M OLLAMA_NUM_PARALLEL { StrEnv(_configService.Config.ollamaNumParallel) }
+                    setx /M OLLAMA_FLASH_ATTENTION { StrEnv(_configService.Config.ollamaFlashAttention) }
+                    setx /M OLLAMA_KV_CACHE_TYPE { StrEnv(_configService.Config.ollamaKvCacheType) }
+                    """;
+                RunCmd(script);
             }
 
             _statusUpdateTimer.Interval = StatusUpdateInterval * 1000;
@@ -266,7 +303,7 @@ setx /M OLLAMA_KV_CACHE_TYPE ""{_configService.Config.ollamaKvCacheType}""
             var models = await _ollama.ListLocalModelsAsync(_cancellationTokenSource.Token);
             var runningModels = await _ollama.ListRunningModelsAsync(_cancellationTokenSource.Token);
             var runningModelNames = runningModels.Select(m => m.Name).ToHashSet();
-
+            
             foreach (var model in models)
             {
                 var modelInfo = OllamaManager.Models.ModelInfo.FromModel(model);
@@ -307,6 +344,20 @@ setx /M OLLAMA_KV_CACHE_TYPE ""{_configService.Config.ollamaKvCacheType}""
         }
     }
 
+    private async Task<string> GetVersionAsync(CancellationToken cancellationToken)
+    {
+        try
+        {
+            var version = await _ollama.GetVersionAsync(cancellationToken);
+            return version.ToString();
+        }
+        catch
+        {
+
+        }
+        return "0.0.0";
+    }
+
     private async Task UpdateOllamaStatus()
     {
         if (!await _updateStatusSemaphore.WaitAsync(0))
@@ -319,7 +370,7 @@ setx /M OLLAMA_KV_CACHE_TYPE ""{_configService.Config.ollamaKvCacheType}""
             if (await _ollama.IsRunningAsync())
             {
                 var totalBytes = Models.Sum(model => model.Size);
-                var version = await _ollama.GetVersionAsync(_cancellationTokenSource.Token);
+                var version = await GetVersionAsync(_cancellationTokenSource.Token);
                 OllamaVersion = $"Ollama version: {version}";
                 StatusText = $"Total models size: {BytesToHumanReadableFormat.Convert(totalBytes)}";
 

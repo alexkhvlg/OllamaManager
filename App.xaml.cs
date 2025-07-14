@@ -42,10 +42,11 @@ public partial class App : Application
         var services = new ServiceCollection();
 
         services.AddTransient<MainWindowViewModel>();
-        services.AddTransient<DetailsViewModel>();
+        services.AddTransient<DetailsWindowViewModel>();
 
+        services.AddTransient<MainWindow>();
         services.AddTransient<DetailsWindow>();
-        services.AddTransient<DetailsWindow>();
+
 
         services.AddSingleton<ConfigService>();
 
