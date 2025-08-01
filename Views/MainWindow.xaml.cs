@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using Microsoft.Extensions.DependencyInjection;
 using OllamaManager.ViewModels;
 
 namespace OllamaManager.Views;
@@ -7,10 +8,13 @@ namespace OllamaManager.Views;
 /// </summary>
 public partial class MainWindow : Window
 {
-    public MainWindow(MainWindowViewModel mainViewModel)
+    public MainWindow()
     {
         InitializeComponent();
+        DataContext = App.Current.Services.GetRequiredService<MainWindowViewModel>();
+    }
 
-        DataContext = mainViewModel;
+    public MainWindow(MainWindowViewModel mainViewModel) : this()
+    {
     }
 }

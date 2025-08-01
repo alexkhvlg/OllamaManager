@@ -80,6 +80,9 @@ public partial class MainWindowViewModel : ObservableObject
     [ObservableProperty]
     private int ollamaKvCacheType = 0;
 
+    [ObservableProperty]
+    private bool isLoading = false;
+
 
     public IAsyncRelayCommand WindowLoadedCommandAsync
     {
@@ -456,6 +459,8 @@ public partial class MainWindowViewModel : ObservableObject
     {
         try
         {
+            IsLoading = true;
+
             if (SelectedModel is null)
             {
                 return;
@@ -475,12 +480,18 @@ public partial class MainWindowViewModel : ObservableObject
         {
             MessageBox.Show($"Failed to unload model. {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
         }
+        finally
+        {
+            IsLoading = false;
+        }
     }
 
     private async Task UnloadModel()
     {
         try
         {
+            IsLoading = true;
+
             if (SelectedModel is null)
             {
                 return;
@@ -500,6 +511,10 @@ public partial class MainWindowViewModel : ObservableObject
         catch (Exception ex)
         {
             MessageBox.Show($"Failed to unload model. {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+        finally
+        {
+            IsLoading = false;
         }
     }
 
@@ -542,6 +557,7 @@ public partial class MainWindowViewModel : ObservableObject
     {
         try
         {
+            IsLoading = true;
             if (SelectedModel is null)
             {
                 return;
@@ -563,6 +579,10 @@ public partial class MainWindowViewModel : ObservableObject
         catch (Exception ex)
         {
             MessageBox.Show($"Failed to delete model. {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+        finally
+        {
+            IsLoading = false;
         }
     }
 
@@ -587,6 +607,8 @@ public partial class MainWindowViewModel : ObservableObject
                 return;
             }
         }
+
+        IsLoading = false;
 
         _cancellationTokenSource.Cancel();
         _statusUpdateTimer?.Stop();

@@ -6,14 +6,22 @@
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:converters="clr-namespace:OllamaManager.Converters"
         mc:Ignorable="d"
-        Title="{Binding WindowTitle, Mode=OneWay}" Height="660" Width="900" WindowStartupLocation="CenterScreen">
+        Title="{Binding WindowTitle, Mode=OneWay}" 
+        Height="660" 
+        Width="900" 
+        WindowStartupLocation="CenterScreen">
 
     <Window.Resources>
         <converters:BytesToHumanReadableConverter x:Key="BytesToHumanReadableConverter"/>
         <converters:RunningStateToIconConverter x:Key="RunningStateToIconConverter"/>
         <converters:ParameterSizeConverter x:Key="ParameterSizeConverter" />
+        <converters:BoolToCursorConverter x:Key="BoolToCursorConverter" />
     </Window.Resources>
 
+    <Window.Cursor>
+        <Binding Path="IsLoading" Converter="{StaticResource BoolToCursorConverter}"/>
+    </Window.Cursor>
+    
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
             <i:InvokeCommandAction Command="{Binding WindowLoadedCommandAsync}" />
