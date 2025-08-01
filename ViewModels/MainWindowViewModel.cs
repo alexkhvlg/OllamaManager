@@ -13,8 +13,7 @@ using OllamaManager.Services;
 using OllamaManager.Views;
 using OllamaSharp;
 using OllamaSharp.Models;
-using System.Net.NetworkInformation;
-using System.DirectoryServices.ActiveDirectory;
+using Microsoft.Extensions.AI;
 
 namespace OllamaManager.ViewModels;
 
@@ -94,6 +93,14 @@ public partial class MainWindowViewModel : ObservableObject
     {
         get;
     }
+    public IAsyncRelayCommand LoadModelCommandAsync
+    {
+        get;
+    }
+    public IAsyncRelayCommand UnloadModelCommandAsync
+    {
+        get;
+    }
     public IAsyncRelayCommand ShowModelInfoCommandAsync
     {
         get;
@@ -158,6 +165,8 @@ public partial class MainWindowViewModel : ObservableObject
         WindowLoadedCommandAsync = new AsyncRelayCommand(WindowLoadedAsync);
         SaveConfigCommand = new RelayCommand(SaveConfig);
         TestConnectionCommandAsync = new AsyncRelayCommand(TestOllamaConnection);
+        LoadModelCommandAsync = new AsyncRelayCommand(LoadModel);
+        UnloadModelCommandAsync = new AsyncRelayCommand(UnloadModel);
         ShowModelInfoCommandAsync = new AsyncRelayCommand(ShowModelInfo);
         DeleteModelCommandAsync = new AsyncRelayCommand(DeleteModel);
         WindowClosingCommand = new RelayCommand<object?>(WindowClosing);
@@ -443,6 +452,57 @@ public partial class MainWindowViewModel : ObservableObject
         }
     }
 
+    private async Task LoadModel()
+    {
+        try
+        {
+            if (SelectedModel is null)
+            {
+                return;
+            }
+
+            var generateRequest = new GenerateRequest
+            {
+                Model = SelectedModel.Name,
+            };
+            await foreach (var stream in _ollama.GenerateAsync(generateRequest, _cancellationTokenSource.Token)) { }
+        }
+        catch (OperationCanceledException)
+        {
+            // Прерывание - ничего не делаем
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Failed to unload model. {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+    }
+
+    private async Task UnloadModel()
+    {
+        try
+        {
+            if (SelectedModel is null)
+            {
+                return;
+            }
+
+            var generateRequest = new GenerateRequest
+            {
+                Model = SelectedModel.Name,
+                KeepAlive = "0"
+            };
+            await foreach (var stream in _ollama.GenerateAsync(generateRequest, _cancellationTokenSource.Token)) { }
+        }
+        catch (OperationCanceledException)
+        {
+            // Прерывание - ничего не делаем
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Failed to unload model. {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+    }
+
     private async Task ShowModelInfo()
     {
         try
@@ -508,6 +568,26 @@ public partial class MainWindowViewModel : ObservableObject
 
     private void WindowClosing(object? o)
     {
+        // Проверяем, идет ли загрузка модели
+        if (_downloadingModels.Any())
+        {
+            var result = MessageBox.Show(
+                "Some models are loading! Exit anyway ?",
+                "Exit confirmation",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Warning);
+
+            if (result != MessageBoxResult.Yes)
+            {
+                // Отменяем закрытие окна
+                if (o is CancelEventArgs cancelEventArgs)
+                {
+                    cancelEventArgs.Cancel = true;
+                }
+                return;
+            }
+        }
+
         _cancellationTokenSource.Cancel();
         _statusUpdateTimer?.Stop();
         _statusUpdateTimer?.Dispose();

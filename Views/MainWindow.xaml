@@ -154,7 +154,11 @@
 
                             <DataGrid.ContextMenu>
                                 <ContextMenu>
-                                    <MenuItem Header="Details" Command="{Binding Path=ShowModelInfoCommandAsync}"/>
+                                    <MenuItem Header="Details" Command="{Binding Path=ShowModelInfoCommandAsync}" FontWeight="Bold"/>
+                                    <Separator/>
+                                    <MenuItem Header="Load" Command="{Binding Path=LoadModelCommandAsync}"/>
+                                    <MenuItem Header="Unload" Command="{Binding Path=UnloadModelCommandAsync}"/>
+                                    <Separator/>
                                     <MenuItem Header="Delete" Command="{Binding Path=DeleteModelCommandAsync}"/>
                                 </ContextMenu>
                             </DataGrid.ContextMenu>
