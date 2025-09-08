@@ -148,6 +148,7 @@
                                 <DataGridTextColumn Header="Parameters" Binding="{Binding ParameterSize, Converter={StaticResource ParameterSizeConverter}}" Width="Auto"/>
                                 <DataGridTextColumn Header="Quantization" Binding="{Binding QuantizationLevel}" Width="Auto"/>
                                 <DataGridTextColumn Header="Usage" Binding="{Binding GpuPercent}" Width="Auto"/>
+                                <DataGridTextColumn Header="ContextLength" Binding="{Binding ContextLength}" Width="Auto"/>
                             </DataGrid.Columns>
 
                             <DataGrid.RowStyle>

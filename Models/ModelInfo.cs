@@ -1,6 +1,4 @@
-﻿using System.ComponentModel;
-using System.Text.Json.Serialization;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using OllamaManager.Enums;
 using OllamaManager.Helpers;
 using OllamaSharp.Models;
@@ -48,6 +46,9 @@ public partial class ModelInfo : ObservableObject
     [ObservableProperty]
     private string quantizationLevel = string.Empty;
 
+    [ObservableProperty]
+    private int contextLength = 0;
+
     public static ModelInfo FromModel(Model model)
     {
         return new ModelInfo
@@ -60,7 +61,7 @@ public partial class ModelInfo : ObservableObject
             Family = model.Details?.Family ?? string.Empty,
             Families = model.Details?.Families,
             ParameterSize = ParameterSizeToDecimal.Convert(model.Details?.ParameterSize),
-            QuantizationLevel = model.Details?.QuantizationLevel ?? string.Empty
+            ContextLength = 0
         };
     }
 }

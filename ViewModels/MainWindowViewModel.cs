@@ -405,11 +405,13 @@ public partial class MainWindowViewModel : ObservableObject
                         {
                             model.GpuPercent = "";
                         }
+                        model.ContextLength = runningModel.ContextLength;
                     }
                     else
                     {
                         model.IsRunning = false;
                         model.GpuPercent = "";
+                        model.ContextLength = 0;
                     }
                 }
 
